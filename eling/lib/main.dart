@@ -10,6 +10,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const MyHomePage(),
+        '/addtask': (context) => const AddTaskPage(),
+      },
       title: 'Eling Task Reminder',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -52,6 +57,34 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+class AddTaskPage extends StatelessWidget {
+  const AddTaskPage({Key? key}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Theme.of(context).primaryColorLight,
+      appBar: AppBar(
+        title: const Center(
+          child: Text('TASK REMINDER'),
+        ),
+      ),
+      body: Center(
+        child: Column(
+          children: [
+            ElevatedButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text('Kembali Ke  Halaman Pertama'))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+//=======dialog pop up========
 void _showSimpleDialog(context) {
   showDialog(
     context: context,
