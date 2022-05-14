@@ -10,11 +10,13 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      // ========== ANOMALI ===============
       initialRoute: '/',
       routes: {
         '/': (context) => const MyHomePage(),
         '/addtask': (context) => const AddTaskPage(),
       },
+      // ======================================
       title: 'Eling Task Reminder',
       theme: ThemeData(
         primarySwatch: Colors.blue,
@@ -57,6 +59,7 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+// ==================== ANOMALI ====================
 class AddTaskPage extends StatelessWidget {
   const AddTaskPage({Key? key}) : super(key: key);
 
@@ -83,7 +86,6 @@ class AddTaskPage extends StatelessWidget {
     );
   }
 }
-
 //=======dialog pop up========
 void _showSimpleDialog(context) {
   showDialog(
