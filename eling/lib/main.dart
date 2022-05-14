@@ -59,7 +59,6 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-
 // ==================== ANOMALI ====================
 class AddTaskPage extends StatelessWidget {
   const AddTaskPage({Key? key}) : super(key: key);
@@ -87,7 +86,7 @@ class AddTaskPage extends StatelessWidget {
     );
   }
 }
-// =============================================== 
+//=======dialog pop up========
 void _showSimpleDialog(context) {
   showDialog(
     context: context,
