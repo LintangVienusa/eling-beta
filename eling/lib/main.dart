@@ -1,3 +1,5 @@
+import 'package:dropdown_search/dropdown_search.dart';
+import 'package:eling/datepicker.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -7,28 +9,36 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
+  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      // ========== ANOMALI ===============
-      initialRoute: '/',
-      routes: {
-        '/': (context) => const MyHomePage(),
-        '/addtask': (context) => const AddTaskPage(),
-      },
-      // ======================================
-      title: 'Eling Task Reminder',
+      title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.cyan,
       ),
-      // home: const MyHomePage(title: 'Eling Home Page'),
+      home: const MyHomePage(title: 'Flutter Demo Home Page'),
     );
   }
 }
 
-class MyHomePage extends StatelessWidget {
-  const MyHomePage({Key? key}) : super(key: key);
-  // final String title;
+class MyHomePage extends StatefulWidget {
+  const MyHomePage({Key? key, required this.title}) : super(key: key);
+
+  final String title;
+
+  @override
+  State<MyHomePage> createState() => _MyHomePageState();
+}
+
+class _MyHomePageState extends State<MyHomePage> {
+  int _counter = 0;
+
+  void _incrementCounter() {
+    setState(() {
+      _counter++;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -59,35 +69,6 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
-
-// ==================== ANOMALI ====================
-class AddTaskPage extends StatelessWidget {
-  const AddTaskPage({Key? key}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).primaryColorLight,
-      appBar: AppBar(
-        title: const Center(
-          child: Text('TASK REMINDER'),
-        ),
-      ),
-      body: Center(
-        child: Column(
-          children: [
-            ElevatedButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                },
-                child: Text('Kembali Ke  Halaman Pertama'))
-          ],
-        ),
-      ),
-    );
-  }
-}
-// =============================================== 
 void _showSimpleDialog(context) {
   showDialog(
     context: context,
@@ -124,23 +105,13 @@ void _showSimpleDialog(context) {
           ),
           Padding(
             padding: EdgeInsets.only(left: 10.0, right: 10.0),
-            child: TextField(
-              style: new TextStyle(
-                  fontSize: 14.0, height: 1.0, color: Colors.black),
-              decoration: new InputDecoration(
-                hintText: "Input nama lengkap",
-                border: OutlineInputBorder(
-                    borderRadius: new BorderRadius.circular(3.0)),
-                contentPadding: const EdgeInsets.symmetric(
-                    vertical: 14.0, horizontal: 15.0),
-              ),
+            child: DropdownSearch<String>(
+              mode: Mode.MENU,
+              items: ['A','B'],
             ),
           ),
           Padding(
             padding: EdgeInsets.all(10.0),
-            child: Text(
-              "Kontak",
-            ),
           ),
           Padding(
             padding: EdgeInsets.only(left: 10.0, right: 10.0),
@@ -148,24 +119,53 @@ void _showSimpleDialog(context) {
               style: new TextStyle(
                   fontSize: 14.0, height: 1.0, color: Colors.black),
               decoration: new InputDecoration(
-                hintText: "Input kontak",
+                hintText: "Task Name",
                 border: OutlineInputBorder(
                     borderRadius: new BorderRadius.circular(3.0)),
                 contentPadding: const EdgeInsets.symmetric(
-                    vertical: 14.0, horizontal: 15.0),
+                    vertical: 20.5, horizontal: 15.0),
               ),
             ),
           ),
           Padding(
-            padding: EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
-            child: RaisedButton(
-              color: Colors.blue,
-              child: Text(
-                "SIMPAN",
-                style: TextStyle(color: Colors.white),
+            padding: EdgeInsets.all(10.0),
+          ),
+          Padding(
+            padding: EdgeInsets.only(left: 10.0, right: 10.0),
+            child: TextField(
+              keyboardType: TextInputType.multiline,
+              maxLines: null,
+              style: const TextStyle(
+                  fontSize: 14.0, height: 1.0, color: Colors.black),
+              decoration: InputDecoration(
+                hintText: "Description of the task \n\n\n\n\n\n",
+                border: OutlineInputBorder(
+                    borderRadius: new BorderRadius.circular(3.0)),
+                contentPadding: const EdgeInsets.symmetric(
+                    vertical: 20.5, horizontal: 15.0),
               ),
-              onPressed: () {},
             ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                RaisedButton(
+                  color: Colors.cyan,
+                  child: const Text(
+                    "Next",
+                    style: TextStyle(color: Colors.white),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                  Navigator.push(
+                    context, MaterialPageRoute(builder: (context) => TanggalPicker()));
+                },
+                )
+              ],
+            )
           )
         ],
       );
