@@ -1,0 +1,69 @@
+{
+  "project_info": {
+    "project_number": "859253222160",
+    "firebase_url": "https://piweling-ueu-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "piweling-ueu",
+    "storage_bucket": "piweling-ueu.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859253222160:android:133538abd92c829b05d395",
+        "android_client_info": {
+          "package_name": "com.example.eling"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859253222160-1gicecvf9gh7r8ecf1lmv1e7it8vcn8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5i56SEy7PFKRwt_TK9jAsWep0iRNY3QM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859253222160-1gicecvf9gh7r8ecf1lmv1e7it8vcn8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:859253222160:android:aa4c1415bd6f5ded05d395",
+        "android_client_info": {
+          "package_name": "com.ueu.eling"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "859253222160-1gicecvf9gh7r8ecf1lmv1e7it8vcn8l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5i56SEy7PFKRwt_TK9jAsWep0iRNY3QM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "859253222160-1gicecvf9gh7r8ecf1lmv1e7it8vcn8l.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
