@@ -9,25 +9,24 @@ import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:firebase_database/firebase_database.dart';
 
-void main() async{
-
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
   runApp(const MyApp());
 
   await PushNotificationService().setupInteractedMessage();
   runApp(MyApp());
-    RemoteMessage? initialMessage =
-        await FirebaseMessaging.instance.getInitialMessage();
-    if (initialMessage != null) {
-      // App received a notification when it was killed
+  RemoteMessage? initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    // App received a notification when it was killed
   }
 }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  // This widget is the root of your application
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -42,21 +41,18 @@ class MyApp extends StatelessWidget {
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key, required this.title}) : super(key: key);
-  
+
   final String title;
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
-
-  
-  
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
   final FirebaseFirestore firestore = FirebaseFirestore.instance;
   final DatabaseReference debe = FirebaseDatabase.instance.ref();
-  final Future <FirebaseApp> _future = Firebase.initializeApp();
+  final Future<FirebaseApp> _future = Firebase.initializeApp();
   var valtaskName = TextEditingController();
   var valtaskDesc = TextEditingController();
   var dateinput = TextEditingController();
@@ -68,28 +64,25 @@ class _MyHomePageState extends State<MyHomePage> {
   // let ref = Database.database("https://<databaseName><region>.firebasedatabase.app")
   String? kindTask;
   @override
-  void initState(){
+  void initState() {
     _read();
   }
+
   void _incrementCounter() {
     setState(() {
       _counter++;
     });
   }
 
-
-
   @override
   Widget build(BuildContext context) {
-
-
     return Scaffold(
       appBar: AppBar(
         title: const Center(
           child: Text('TASK REMINDER',
-          style: TextStyle(
-            color: Colors.white,
-          )),
+              style: TextStyle(
+                color: Colors.white,
+              )),
         ),
       ),
       // body: Center(
@@ -113,18 +106,16 @@ class _MyHomePageState extends State<MyHomePage> {
           //   ),
           // );
           return ListTile(
-              title: Text(listTaskName[index]),
-              subtitle: Text(lisDesc[index]+' - '+lisTime[index]),
-            );
+            title: Text(listTaskName[index]),
+            subtitle: Text(lisDesc[index] + ' - ' + lisTime[index]),
+          );
         },
         itemCount: listTaskName.length,
       ),
-      
 
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-            _showSimpleDialog(context);
-          
+          _showSimpleDialog(context);
         },
         child: const Icon(
           Icons.add,
@@ -137,9 +128,9 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showSimpleDialog(context) {
     final _formKey = GlobalKey<FormState>();
     // String? kindTask;
-    
+
     //set texteditingcontroller variable
-    
+
     //inisialize firebase instance
     FirebaseFirestore firebase = FirebaseFirestore.instance;
     CollectionReference? users;
@@ -156,8 +147,8 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Text(
                       "ADD NEW TASK",
                       textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+                      style: TextStyle(
+                          fontSize: 16.0, fontWeight: FontWeight.bold),
                     ),
                   ),
                   IconButton(
@@ -180,7 +171,7 @@ class _MyHomePageState extends State<MyHomePage> {
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               child: DropdownSearch<String>(
                 mode: Mode.MENU,
-                items: ['Forum','Quiz','Tugas'],
+                items: ['Forum', 'Quiz', 'Tugas'],
                 onChanged: (text) {
                   setState(() {
                     kindTask = text;
@@ -200,11 +191,9 @@ class _MyHomePageState extends State<MyHomePage> {
                 decoration: new InputDecoration(
                   hintText: "Task Name",
                   border: OutlineInputBorder(
-                      borderRadius: new BorderRadius.circular(3.0)
-                  ),
+                      borderRadius: new BorderRadius.circular(3.0)),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 20.5, horizontal: 15.0
-                  ),
+                      vertical: 20.5, horizontal: 15.0),
                 ),
                 controller: valtaskName,
               ),
@@ -229,28 +218,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: valtaskDesc,
               ),
             ),
-
             Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  RaisedButton(
-                    color: Colors.cyan,
-                    child: const Text(
-                      "Next",
-                      style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                    _showSimpleDialog2(context);
-                    // Navigator.push(
-                      // context, MaterialPageRoute(builder: (context) => TanggalPicker()));
-                  },
-                  )
-                ],
-              )
-            )
+                padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    RaisedButton(
+                      color: Colors.cyan,
+                      child: const Text(
+                        "Next",
+                        style: TextStyle(color: Colors.white),
+                      ),
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        _showSimpleDialog2(context);
+                        // Navigator.push(
+                        // context, MaterialPageRoute(builder: (context) => TanggalPicker()));
+                      },
+                    )
+                  ],
+                ))
           ],
         );
       },
@@ -260,140 +247,143 @@ class _MyHomePageState extends State<MyHomePage> {
   void _showSimpleDialog2(BuildContext context) {
     // sleep(Duration(seconds: 3));
     showDialog(
-      context: context,
-      builder: (context) {
-      TextEditingController dateinput = TextEditingController();
-      TextEditingController timeinput = TextEditingController();  
-        return SimpleDialog(
-          children: [
-            Padding(
-              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-              child: Row(
-                children: [
-                  const Expanded(
-                    child: Text(
-                      "ADD NEW TASK",
-                      textAlign: TextAlign.center,
-                      style:
-                          TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+        context: context,
+        builder: (context) {
+          TextEditingController dateinput = TextEditingController();
+          TextEditingController timeinput = TextEditingController();
+          return SimpleDialog(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: Row(
+                  children: [
+                    const Expanded(
+                      child: Text(
+                        "ADD NEW TASK",
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                            fontSize: 16.0, fontWeight: FontWeight.bold),
+                      ),
                     ),
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.close),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                  )
-                ],
-              ),
-            ),
-            const Divider(),
-            const Padding(
-              padding: EdgeInsets.all(10.0),
-              child: Text(
-                "When to notify?",
-              ),
-            ),
-              Padding(padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-              child: TextField(
-                  controller: dateinput, //editing controller of this TextField
-                  decoration: const InputDecoration( 
-                    icon: Icon(Icons.calendar_today), //icon of text field
-                    labelText: "Enter Date" //label text of field
-                  ),
-                  readOnly: true,  //set it true, so that user will not able to edit text
-                  onTap: () async {
-                    DateTime? pickedDate = await showDatePicker(
-                        context: context, initialDate: DateTime.now(),
-                        firstDate: DateTime.now(), //DateTime.now() - not to allow to choose before today.
-                        lastDate: DateTime(3000)
-                    );
-                    
-                    if(pickedDate != null ){
-                        print(pickedDate);  //pickedDate output format => 2021-03-10 00:00:00.000
-                        String formattedDate = DateFormat('yyyy-MM-dd').format(pickedDate); 
-                        print(formattedDate); //formatted date output using intl package =>  2021-03-16
-                          //you can implement different kind of Date Format here according to your requirement
-                        setState(() {
-                          dateinput.text = formattedDate; //set output date to TextField value. 
-                        });
-                    }else{
-                        print("Date is not selected");
-                    }
-                  },
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    )
+                  ],
                 ),
               ),
-
-              Padding(padding: const EdgeInsets.only(left: 10.0, right: 10.0),
-              child: TextField(
-                  controller: timeinput, //editing controller of this TextField
-                  decoration: const InputDecoration( 
-                    icon: Icon(Icons.access_time), //icon of text field
-                    labelText: "Enter Time" //label text of field
-                  ),
-                  readOnly: true,  //set it true, so that user will not able to edit text
+              const Divider(),
+              const Padding(
+                padding: EdgeInsets.all(10.0),
+                child: Text(
+                  "When to notify?",
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: TextField(
+                  controller: dateinput, //editing controller of this TextField
+                  decoration: const InputDecoration(
+                      icon: Icon(Icons.calendar_today), //icon of text field
+                      labelText: "Enter Date" //label text of field
+                      ),
+                  readOnly:
+                      true, //set it true, so that user will not able to edit text
                   onTap: () async {
-                      TimeOfDay time = TimeOfDay.now();
-                      TimeOfDay? pickedTime = await showTimePicker(
-                      context: context,
-                      initialTime: time 
-                    );
-                    
-                    if(pickedTime != null ){
+                    DateTime? pickedDate = await showDatePicker(
+                        context: context,
+                        initialDate: DateTime.now(),
+                        firstDate: DateTime
+                            .now(), //DateTime.now() - not to allow to choose before today.
+                        lastDate: DateTime(3000));
 
-                          var min = pickedTime.minute.toString();
-                          var hour = pickedTime.hour.toString();
-                          if (hour.length == 1) {
-                            hour = '0'+hour;
-                          }
-                          if (min.length == 1) {
-                            min = '0'+min;
-                          }
-                          setState(() {
-                            timeinput.text = hour+":"+min;
-                          });
-                          print(timeinput);
-                    }else{
-                        print("Date is not selected");
+                    if (pickedDate != null) {
+                      print(
+                          pickedDate); //pickedDate output format => 2021-03-10 00:00:00.000
+                      String formattedDate =
+                          DateFormat('yyyy-MM-dd').format(pickedDate);
+                      print(
+                          formattedDate); //formatted date output using intl package =>  2021-03-16
+                      //you can implement different kind of Date Format here according to your requirement
+                      setState(() {
+                        dateinput.text =
+                            formattedDate; //set output date to TextField value.
+                      });
+                    } else {
+                      print("Date is not selected");
                     }
                   },
                 ),
               ),
               Padding(
-              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  RaisedButton(
-                    color: Colors.cyan,
-                    child: const Text(
-                      "Save",
-                      style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () async {
-                    createRecord(dateinput.text, timeinput.text);
-                    Navigator.of(context).pop();
-                    Navigator.push(
-                      context, MaterialPageRoute(builder: (context) => MyApp()));
+                padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+                child: TextField(
+                  controller: timeinput, //editing controller of this TextField
+                  decoration: const InputDecoration(
+                      icon: Icon(Icons.access_time), //icon of text field
+                      labelText: "Enter Time" //label text of field
+                      ),
+                  readOnly:
+                      true, //set it true, so that user will not able to edit text
+                  onTap: () async {
+                    TimeOfDay time = TimeOfDay.now();
+                    TimeOfDay? pickedTime = await showTimePicker(
+                        context: context, initialTime: time);
+
+                    if (pickedTime != null) {
+                      var min = pickedTime.minute.toString();
+                      var hour = pickedTime.hour.toString();
+                      if (hour.length == 1) {
+                        hour = '0' + hour;
+                      }
+                      if (min.length == 1) {
+                        min = '0' + min;
+                      }
+                      setState(() {
+                        timeinput.text = hour + ":" + min;
+                      });
+                      print(timeinput);
+                    } else {
+                      print("Date is not selected");
+                    }
                   },
-                  )
-                ],
-              )
-            )
-          ],
-        );
-      }
-    );
+                ),
+              ),
+              Padding(
+                  padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      RaisedButton(
+                        color: Colors.cyan,
+                        child: const Text(
+                          "Save",
+                          style: TextStyle(color: Colors.white),
+                        ),
+                        onPressed: () async {
+                          createRecord(dateinput.text, timeinput.text);
+                          Navigator.of(context).pop();
+                          Navigator.push(context,
+                              MaterialPageRoute(builder: (context) => MyApp()));
+                        },
+                      )
+                    ],
+                  ))
+            ],
+          );
+        });
   }
 
   Future<void> createRecord(String tgl, String jam) async {
     DateTime now = DateTime.now();
     try {
       await firestore.collection('users').doc('testusers').set({
-          'taskCats': kindTask,
-          'taskName': valtaskName.text,
-          'taskDesc': valtaskDesc.text,
-          'remindTime' : tgl +' '+ jam,
+        'taskCats': kindTask,
+        'taskName': valtaskName.text,
+        'taskDesc': valtaskDesc.text,
+        'remindTime': tgl + ' ' + jam,
       });
       // print(tgl);
       // print(jam);
@@ -405,7 +395,8 @@ class _MyHomePageState extends State<MyHomePage> {
   void _read() async {
     DocumentSnapshot documentSnapshot;
     try {
-      documentSnapshot = await firestore.collection('users').doc('testusers').get();
+      documentSnapshot =
+          await firestore.collection('users').doc('testusers').get();
       print(documentSnapshot.data());
       print('udah masuk');
       var taskname = documentSnapshot.get('taskName');
@@ -417,11 +408,9 @@ class _MyHomePageState extends State<MyHomePage> {
         listCats.add(taskCats);
         lisDesc.add(taskDesc);
         lisTime.add(remindTime);
-        
       });
     } catch (e) {
       print(e);
     }
   }
 }
-
