@@ -44,6 +44,8 @@ dependencies:
   firebase_messaging: ^11.4.2
   flutter_local_notifications: ^9.4.0
   firebase_database: ^9.0.16
+  path_provider: any
+
 
 dev_dependencies:
   flutter_test:

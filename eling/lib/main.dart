@@ -3,15 +3,17 @@ import 'package:dropdown_search/dropdown_search.dart';
 import 'package:eling/services/PushNotificationService.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-// ignore: unused_import
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
-import 'package:firebase_database/firebase_database.dart';
+import 'database/db_helper.dart';
+import 'model/tasks.dart';
+// ignore: unused_import
+// import 'package:cloud_firestore/cloud_firestore.dart';
+// import 'package:firebase_core/firebase_core.dart';
+// import 'package:firebase_database/firebase_database.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp();
+  // await Firebase.initializeApp();
   runApp(const MyApp());
 
   await PushNotificationService().setupInteractedMessage();
@@ -40,19 +42,19 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({Key? key, required this.title, this.tasks}) : super(key: key);
 
   final String title;
-
+  final Tasks? tasks;
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
 class _MyHomePageState extends State<MyHomePage> {
   int _counter = 0;
-  final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  final DatabaseReference debe = FirebaseDatabase.instance.ref();
-  final Future<FirebaseApp> _future = Firebase.initializeApp();
+  // final FirebaseFirestore firestore = FirebaseFirestore.instance;
+  // final DatabaseReference debe = FirebaseDatabase.instance.ref();
+  // final Future<FirebaseApp> _future = Firebase.initializeApp();
   var valtaskName = TextEditingController();
   var valtaskDesc = TextEditingController();
   var dateinput = TextEditingController();
@@ -61,17 +63,16 @@ class _MyHomePageState extends State<MyHomePage> {
   final List listCats = [];
   final List lisDesc = [];
   final List lisTime = [];
+  
+  List<Tasks> listtasks = [];
+  DbHelper db = DbHelper();
   // let ref = Database.database("https://<databaseName><region>.firebasedatabase.app")
   String? kindTask;
   @override
   void initState() {
-    _read();
-  }
-
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
+    //menjalankan fungsi getallkontak saat pertama kali dimuat
+    _getTasks();
+    super.initState();
   }
 
   @override
@@ -85,55 +86,133 @@ class _MyHomePageState extends State<MyHomePage> {
               )),
         ),
       ),
-      // body: Center(
-      //     child: Column(
-      //     mainAxisAlignment: MainAxisAlignment.center,
-      //     // ignore: prefer_const_literals_to_create_immutables
-      //     children: <Widget>[
-      //       const Text(
-      //         'Tester commit :(',
-      //       ),
-      //     ],
-      //   ),
-      // ),
-      body: ListView.builder(
-        itemBuilder: (context, index) {
-          final item = listTaskName[index];
-          // return Card(
-          //   child: Padding(
-          //     padding: const EdgeInsets.all(15.0),
-          //     child: Text(datalist[index], style: TextStyle(fontSize: 30)),
-          //   ),
-          // );
-          return ListTile(
-            title: Text(listTaskName[index]),
-            subtitle: Text(lisDesc[index] + ' - ' + lisTime[index]),
-          );
-        },
-        itemCount: listTaskName.length,
-      ),
 
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          _showSimpleDialog(context);
-        },
-        child: const Icon(
-          Icons.add,
-          color: Colors.white,
-        ),
-      ),
-    );
+      body: ListView.builder(
+          itemCount: listtasks.length,
+          itemBuilder: (context, index) {
+            Tasks tasks = listtasks[index];
+            final xremindAt = tasks.remindAt;
+            var converteddata = DateTime.fromMillisecondsSinceEpoch(xremindAt!);
+            return Padding(
+            padding: const EdgeInsets.only(
+                top: 20
+            ),
+            child: ListTile(
+              leading: Icon(
+              Icons.edit_note, 
+              size: 50,
+              ),
+              title: Text(
+              '${tasks.taskCats}'
+              ),
+              subtitle: Column(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                      Padding(
+                      padding: const EdgeInsets.only(
+                          top: 8, 
+                      ),
+                      child: Text("${tasks.taskName}"),
+                      ), 
+                      Padding(
+                      padding: const EdgeInsets.only(
+                          top: 8,
+                      ),
+                      child: Text("${tasks.taskDesc}"),
+                      ),
+                      Padding(
+                      padding: const EdgeInsets.only(
+                          top: 8,
+                      ),
+                      child: Text("${tasks.remindAt}"),
+                      )
+                  ],
+                  ),
+                  trailing: 
+                  FittedBox(
+                  fit: BoxFit.fill,
+                  child: Row(
+                      children: [
+                      // button edit 
+                      // IconButton(
+                      //     onPressed: () {
+                      //     _openFormEdit(kontak);
+                      //     },
+                      //     icon: Icon(Icons.edit)
+                      // ),
+                      // button hapus
+                      IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: (){
+                          //membuat dialog konfirmasi hapus
+                          AlertDialog hapus = AlertDialog(
+                              title: Text("Information"),
+                              content: Container(
+                              height: 100, 
+                              child: Column(
+                                  children: [
+                                  Text(
+                                      "Yakin ingin Menghapus Reminder ${tasks.taskName} ?"
+                                  )
+                                  ],
+                              ),
+                              ),
+                              //terdapat 2 button.
+                              //jika ya maka jalankan _deleteKontak() dan tutup dialog
+                              //jika tidak maka tutup dialog
+                              actions: [
+                              TextButton(
+                                  onPressed: (){
+                                  _deleteTasks(tasks, index);
+                                  Navigator.pop(context);
+                                  }, 
+                                  child: Text("Ya")
+                              ), 
+                              TextButton(
+                                  child: Text('Tidak'),
+                                  onPressed: () {
+                                  Navigator.pop(context);
+                                  },
+                              ),
+                              ],
+                          );
+                          showDialog(context: context, builder: (context) => hapus);
+                          }, 
+                      )
+                      ],
+                  ),
+                  ),
+              ),
+              );
+          }),
+          //membuat button mengapung di bagian bawah kanan layar
+          floatingActionButton: FloatingActionButton(
+              child: Icon(Icons.add), 
+              onPressed: (){
+              _showSimpleDialog(context);
+              },
+          ),
+            
+        );
+        
+        
+
+    //   floatingActionButton: FloatingActionButton(
+    //     onPressed: () {
+    //       _showSimpleDialog(context);
+    //     },
+    //     child: const Icon(
+    //       Icons.add,
+    //       color: Colors.white,
+    //     ),
+    //   ),
+    // );
+
+    
   }
 
   void _showSimpleDialog(context) {
-    final _formKey = GlobalKey<FormState>();
-    // String? kindTask;
-
-    //set texteditingcontroller variable
-
-    //inisialize firebase instance
-    FirebaseFirestore firebase = FirebaseFirestore.instance;
-    CollectionReference? users;
     showDialog(
       context: context,
       builder: (context) {
@@ -160,13 +239,16 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
               ),
             ),
+
             Divider(),
+
             Padding(
               padding: EdgeInsets.all(10.0),
               child: Text(
                 "What kind of task?",
               ),
             ),
+
             Padding(
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               child: DropdownSearch<String>(
@@ -180,9 +262,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 },
               ),
             ),
+
             Padding(
               padding: EdgeInsets.all(10.0),
             ),
+
             Padding(
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               child: TextField(
@@ -198,9 +282,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: valtaskName,
               ),
             ),
+
             Padding(
               padding: EdgeInsets.all(10.0),
             ),
+
             Padding(
               padding: EdgeInsets.only(left: 10.0, right: 10.0),
               child: TextField(
@@ -218,26 +304,26 @@ class _MyHomePageState extends State<MyHomePage> {
                 controller: valtaskDesc,
               ),
             ),
+
             Padding(
-                padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
-                child: Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    RaisedButton(
-                      color: Colors.cyan,
-                      child: const Text(
-                        "Next",
-                        style: TextStyle(color: Colors.white),
-                      ),
-                      onPressed: () {
-                        Navigator.of(context).pop();
-                        _showSimpleDialog2(context);
-                        // Navigator.push(
-                        // context, MaterialPageRoute(builder: (context) => TanggalPicker()));
-                      },
-                    )
-                  ],
-                ))
+              padding: const EdgeInsets.fromLTRB(10.0, 10.0, 10.0, 0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  RaisedButton(
+                    color: Colors.cyan,
+                    child: const Text(
+                      "Next",
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                      _showSimpleDialog2(context);
+                    },
+                  )
+                ],
+              )
+            )
           ],
         );
       },
@@ -245,7 +331,6 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void _showSimpleDialog2(BuildContext context) {
-    // sleep(Duration(seconds: 3));
     showDialog(
         context: context,
         builder: (context) {
@@ -363,10 +448,10 @@ class _MyHomePageState extends State<MyHomePage> {
                           style: TextStyle(color: Colors.white),
                         ),
                         onPressed: () async {
-                          createRecord(dateinput.text, timeinput.text);
+                          upsertTask(dateinput.text, timeinput.text);
                           Navigator.of(context).pop();
                           Navigator.push(context,
-                              MaterialPageRoute(builder: (context) => MyApp()));
+                          MaterialPageRoute(builder: (context) => MyApp()));
                         },
                       )
                     ],
@@ -376,41 +461,58 @@ class _MyHomePageState extends State<MyHomePage> {
         });
   }
 
-  Future<void> createRecord(String tgl, String jam) async {
-    DateTime now = DateTime.now();
-    try {
-      await firestore.collection('users').doc('testusers').set({
-        'taskCats': kindTask,
-        'taskName': valtaskName.text,
-        'taskDesc': valtaskDesc.text,
-        'remindTime': tgl + ' ' + jam,
+  Future<void> _getTasks() async {
+    //list menampung data dari database
+    var list = await db.getTasks();
+        //ada perubahanan state
+    setState(() {
+            //hapus data pada listKontak
+      listtasks.clear();
+            //lakukan perulangan pada variabel list
+      list!.forEach((tasks) {
+        //masukan data ke listKontak
+        listtasks.add(Tasks.fromMap(tasks));
       });
-      // print(tgl);
-      // print(jam);
-    } catch (e) {
-      print(e);
+    });
+  }
+
+  Future<void> _deleteTasks(Tasks tasks, int position) async {
+    await db.deleteTasks(tasks.id!);
+    setState(() {
+        listtasks.removeAt(position);
+    });
+  }
+
+  Future<void> upsertTask(dateinput, timeinput) async {
+    var dateandtime = dateinput+' '+timeinput;
+    DateTime valdateandtime = DateTime.parse(dateandtime);
+    int epoch = valdateandtime.millisecondsSinceEpoch;
+    // var converteddata = DateTime.fromMillisecondsSinceEpoch(epoch);
+    if (widget.tasks != null) {
+        //update
+        await db.updateTasks(Tasks.fromMap({
+        // 'id' : widget.tasks!.id,
+        'taskCats' : kindTask!,
+        'taskName' : valtaskName.text,
+        'taskDesc' : valtaskDesc.text,
+        'remindAt' : valdateandtime
+        }));
+        Navigator.push(context,
+        MaterialPageRoute(builder: (context) => MyApp()));
+    } else {
+        //insert
+        await db.storeTask(Tasks(
+            // id: int? taskId!.text,
+            taskCats: kindTask,
+            taskName: valtaskName.text,
+            taskDesc: valtaskDesc.text,
+            remindAt: epoch
+        ));
+        // Navigator.pop(context, 'save');
+        Navigator.push(context,
+        MaterialPageRoute(builder: (context) => MyApp()));
     }
   }
 
-  void _read() async {
-    DocumentSnapshot documentSnapshot;
-    try {
-      documentSnapshot =
-          await firestore.collection('users').doc('testusers').get();
-      print(documentSnapshot.data());
-      print('udah masuk');
-      var taskname = documentSnapshot.get('taskName');
-      var taskCats = documentSnapshot.get('taskCats');
-      var taskDesc = documentSnapshot.get('taskDesc');
-      var remindTime = documentSnapshot.get('remindTime');
-      setState(() {
-        listTaskName.add(taskname);
-        listCats.add(taskCats);
-        lisDesc.add(taskDesc);
-        lisTime.add(remindTime);
-      });
-    } catch (e) {
-      print(e);
-    }
-  }
 }
+
