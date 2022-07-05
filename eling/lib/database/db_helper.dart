@@ -37,7 +37,7 @@ class DbHelper {
         
     //membuat tabel dan field-fieldnya
     Future<void> _onCreate(Database db, int version) async {
-        var sql = "CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL, "
+        var sql = "CREATE TABLE $tableName($columnId INTEGER PRIMARY KEY NOT NULL, "
             "$columnCats TEXT,"
             "$columnName TEXT,"
             "$columnDesc TEXT,"
@@ -68,7 +68,7 @@ class DbHelper {
     //update database
     Future<int?> updateTasks(Tasks tasks) async {
         var dbClient = await _db;
-        return await dbClient!.update(tableName, tasks.toMap(), where: '$columnId = ?', whereArgs: [tasks.id]);
+        return await dbClient!.update(tableName, tasks.toMap(), where: '$columnId = ?', whereArgs: [tasks.taskID]);
     }
         
     //hapus database

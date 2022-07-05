@@ -1,29 +1,29 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unnecessary_new
 import 'package:dropdown_search/dropdown_search.dart';
-import 'package:eling/services/PushNotificationService.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:firebase_messaging/firebase_messaging.dart';
 import 'database/db_helper.dart';
 import 'model/tasks.dart';
+
+
 // ignore: unused_import
 // import 'package:cloud_firestore/cloud_firestore.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_database/firebase_database.dart';
 
-void main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-  // await Firebase.initializeApp();
-  runApp(const MyApp());
+// void main() async {
+//   WidgetsFlutterBinding.ensureInitialized();
+//   // await Firebase.initializeApp();
+//   runApp(const MyApp());
 
-  await PushNotificationService().setupInteractedMessage();
-  runApp(MyApp());
-  RemoteMessage? initialMessage =
-      await FirebaseMessaging.instance.getInitialMessage();
-  if (initialMessage != null) {
-    // App received a notification when it was killed
-  }
-}
+//   await PushNotificationService().setupInteractedMessage();
+//   runApp(MyApp());
+//   RemoteMessage? initialMessage =
+//       await FirebaseMessaging.instance.getInitialMessage();
+//   if (initialMessage != null) {
+//     // App received a notification when it was killed
+//   }
+// }
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
@@ -51,10 +51,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
-  // final FirebaseFirestore firestore = FirebaseFirestore.instance;
-  // final DatabaseReference debe = FirebaseDatabase.instance.ref();
-  // final Future<FirebaseApp> _future = Firebase.initializeApp();
+  // int _counter = 0;
   var valtaskName = TextEditingController();
   var valtaskDesc = TextEditingController();
   var dateinput = TextEditingController();
@@ -66,7 +63,6 @@ class _MyHomePageState extends State<MyHomePage> {
   
   List<Tasks> listtasks = [];
   DbHelper db = DbHelper();
-  // let ref = Database.database("https://<databaseName><region>.firebasedatabase.app")
   String? kindTask;
   @override
   void initState() {
@@ -125,7 +121,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       padding: const EdgeInsets.only(
                           top: 8,
                       ),
-                      child: Text("${tasks.remindAt}"),
+                      child: Text("$converteddata"),
                       )
                   ],
                   ),
@@ -137,7 +133,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       // button edit 
                       // IconButton(
                       //     onPressed: () {
-                      //     _openFormEdit(kontak);
+                      //     _openFormEdit(tasks);
                       //     },
                       //     icon: Icon(Icons.edit)
                       // ),
@@ -147,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           onPressed: (){
                           //membuat dialog konfirmasi hapus
                           AlertDialog hapus = AlertDialog(
-                              title: Text("Information"),
+                              title: Text("Warning"),
                               content: Container(
                               height: 100, 
                               child: Column(
@@ -164,15 +160,19 @@ class _MyHomePageState extends State<MyHomePage> {
                               actions: [
                               TextButton(
                                   onPressed: (){
+                                  Navigator.of(context, rootNavigator: true).pop();
                                   _deleteTasks(tasks, index);
-                                  Navigator.pop(context);
+                                  // Navigator.push(
+                                  //   context,
+                                  //   MaterialPageRoute(builder: (context) => MyApp()),
+                                  // );
                                   }, 
                                   child: Text("Ya")
                               ), 
                               TextButton(
                                   child: Text('Tidak'),
                                   onPressed: () {
-                                  Navigator.pop(context);
+                                  Navigator.of(context, rootNavigator: true).pop();
                                   },
                               ),
                               ],
@@ -188,7 +188,10 @@ class _MyHomePageState extends State<MyHomePage> {
           }),
           //membuat button mengapung di bagian bawah kanan layar
           floatingActionButton: FloatingActionButton(
-              child: Icon(Icons.add), 
+              child: Icon(
+                Icons.add,
+                color: Colors.white  
+              ), 
               onPressed: (){
               _showSimpleDialog(context);
               },
@@ -255,10 +258,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 mode: Mode.MENU,
                 items: ['Forum', 'Quiz', 'Tugas'],
                 onChanged: (text) {
-                  setState(() {
+                  // setState(() {
                     kindTask = text;
-                    print("tasknya: $kindTask");
-                  });
+                  //   print("tasknya: $kindTask");
+                  // });
                 },
               ),
             ),
@@ -293,13 +296,15 @@ class _MyHomePageState extends State<MyHomePage> {
                 keyboardType: TextInputType.multiline,
                 maxLines: null,
                 style: const TextStyle(
-                    fontSize: 14.0, height: 1.0, color: Colors.black),
-                decoration: InputDecoration(
+                  fontSize: 14.0, height: 1.0, color: Colors.black),
+                  decoration: InputDecoration(
                   hintText: "Description of the task \n\n\n\n\n\n",
                   border: OutlineInputBorder(
-                      borderRadius: new BorderRadius.circular(3.0)),
+                    borderRadius: new BorderRadius.circular(3.0)
+                  ),
                   contentPadding: const EdgeInsets.symmetric(
-                      vertical: 20.5, horizontal: 15.0),
+                    vertical: 20.5, horizontal: 15.0
+                  ),
                 ),
                 controller: valtaskDesc,
               ),
@@ -477,7 +482,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _deleteTasks(Tasks tasks, int position) async {
-    await db.deleteTasks(tasks.id!);
+    await db.deleteTasks(tasks.taskID!);
     setState(() {
         listtasks.removeAt(position);
     });
@@ -487,11 +492,14 @@ class _MyHomePageState extends State<MyHomePage> {
     var dateandtime = dateinput+' '+timeinput;
     DateTime valdateandtime = DateTime.parse(dateandtime);
     int epoch = valdateandtime.millisecondsSinceEpoch;
+    DateTime idTask = DateTime.now();
+    int convertedID = idTask.millisecondsSinceEpoch;
+
     // var converteddata = DateTime.fromMillisecondsSinceEpoch(epoch);
     if (widget.tasks != null) {
         //update
         await db.updateTasks(Tasks.fromMap({
-        // 'id' : widget.tasks!.id,
+        'taskID' : convertedID,
         'taskCats' : kindTask!,
         'taskName' : valtaskName.text,
         'taskDesc' : valtaskDesc.text,
@@ -502,7 +510,7 @@ class _MyHomePageState extends State<MyHomePage> {
     } else {
         //insert
         await db.storeTask(Tasks(
-            // id: int? taskId!.text,
+            taskID: convertedID,
             taskCats: kindTask,
             taskName: valtaskName.text,
             taskDesc: valtaskDesc.text,
@@ -513,6 +521,16 @@ class _MyHomePageState extends State<MyHomePage> {
         MaterialPageRoute(builder: (context) => MyApp()));
     }
   }
+
+  
+
+  // Future<void> _openFormEdit(Tasks tasks) async {
+  //   var result = await Navigator.push(context,
+  //       MaterialPageRoute(builder: (context) => MyApp(tasks: tasks)));
+  //   if (result == 'update') {
+  //       _MyHomePageState();
+  //   }
+  // }
 
 }
 

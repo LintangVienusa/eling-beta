@@ -1,17 +1,17 @@
 class Tasks{
-    int? id;
+    int? taskID;
     String? taskCats;
     String? taskName;
     String? taskDesc;
     int? remindAt;
     
-    Tasks({this.id, this.taskCats, this.taskName, this.taskDesc, this.remindAt});
+    Tasks({this.taskID, this.taskCats, this.taskName, this.taskDesc, this.remindAt});
     
     Map<String, dynamic> toMap() {
         var map = Map<String, dynamic>();
     
-        if (id != null) {
-          map['id'] = id;
+        if (taskID != null) {
+          map['taskID'] = taskID;
         }
         map['taskCats'] = taskCats;
         map['taskName'] = taskName;
@@ -23,7 +23,7 @@ class Tasks{
     }
     
     Tasks.fromMap(Map<String, dynamic> map) {
-        this.id = map['id'];
+        this.taskID = map['taskID'];
         this.taskCats = map['taskCats'];
         this.taskName = map['taskName'];
         this.taskDesc = map['taskDesc'];
