@@ -1,7 +1,9 @@
 // ignore_for_file: prefer_const_constructors, prefer_const_literals_to_create_immutables, unnecessary_new
 import 'package:dropdown_search/dropdown_search.dart';
+import 'package:eling/services/PushNotificationService.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'database/db_helper.dart';
 import 'model/tasks.dart';
 
@@ -11,19 +13,20 @@ import 'model/tasks.dart';
 // import 'package:firebase_core/firebase_core.dart';
 // import 'package:firebase_database/firebase_database.dart';
 
-// void main() async {
-//   WidgetsFlutterBinding.ensureInitialized();
-//   // await Firebase.initializeApp();
-//   runApp(const MyApp());
 
-//   await PushNotificationService().setupInteractedMessage();
-//   runApp(MyApp());
-//   RemoteMessage? initialMessage =
-//       await FirebaseMessaging.instance.getInitialMessage();
-//   if (initialMessage != null) {
-//     // App received a notification when it was killed
-//   }
-// }
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  // await Firebase.initializeApp();
+  runApp(const MyApp());
+
+  await PushNotificationService().setupInteractedMessage();
+  runApp(MyApp());
+  RemoteMessage? initialMessage =
+      await FirebaseMessaging.instance.getInitialMessage();
+  if (initialMessage != null) {
+    // App received a notification when it was killed
+  }
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
